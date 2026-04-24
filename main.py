@@ -12,7 +12,7 @@ app.add_middleware(
 )
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "fastapi in service..."}
 
 
 # 挂载路由/注册路由
