@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from routers import user
+from routers import invoice
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
@@ -17,3 +18,4 @@ async def root():
 
 # 挂载路由/注册路由
 app.include_router(user.router)
+app.include_router(invoice.router)
