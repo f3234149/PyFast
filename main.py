@@ -1,8 +1,19 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from routers import user
-from routers import invoice
 from fastapi.middleware.cors import CORSMiddleware
-app = FastAPI()
+from config.db_conf import check_db_connection, close_db_engine
+from routers import invoice, user
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    await check_db_connection()
+    yield
+    await close_db_engine()
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

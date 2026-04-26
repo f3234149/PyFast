@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "pyfast"
+version = "0.1.0"
+description = "FastAPI service with production-ready MySQL configuration."
+authors = ["pyfast contributors"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "0.135.3"
+uvicorn = { version = "0.44.0", extras = ["standard"] }
+sqlalchemy = "2.0.49"
+aiomysql = "0.3.2"
+pymysql = "1.1.2"
+pydantic = "2.12.5"
+pydantic-settings = "*"
+passlib = "1.7.4"
+bcrypt = "4.0.1"
+alipay-sdk-python = "3.7.1098"
+pyyaml = "^6.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+httpx = "^0.28.1"
+
+
+[[tool.poetry.source]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+priority = "primary"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"

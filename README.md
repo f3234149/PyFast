@@ -1,5 +1,26 @@
 # PyFast
-python、fastapi
+
+Python + FastAPI service.
+
+## Dependency management (Poetry)
+
+1. Install Poetry:
+   - [https://python-poetry.org/docs/#installation](https://python-poetry.org/docs/#installation)
+2. Install project dependencies:
+   - `poetry install`
+3. Run service:
+   - `poetry run uvicorn main:app --host 0.0.0.0 --port 8000 --reload`
+
+## MySQL production baseline
+
+1. Copy env template:
+   - `copy .env.example .env` (Windows)
+2. Update DB variables in `.env`:
+   - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
+3. Tune pool and timeout in production:
+   - `DB_POOL_SIZE`, `DB_MAX_OVERFLOW`, `DB_POOL_RECYCLE`, `DB_POOL_TIMEOUT`
+   - `DB_CONNECT_TIMEOUT`, `DB_READ_TIMEOUT`, `DB_WRITE_TIMEOUT`
+4. Application startup now checks DB connectivity with `SELECT 1`, and shutdown disposes the engine.
 
 ## Alipay reverse invoice (certificate mode)
 
@@ -7,7 +28,7 @@ This project uses the official `alipay-sdk-python` and constructs `DefaultAlipay
 in certificate mode for reverse invoice integration.
 
 1. Install dependencies:
-   - `pip install -r requirements.txt`
+   - `poetry install`
 2. Configure environment variables:
    - `ALIPAY_APP_ID`
    - `ALIPAY_PRIVATE_KEY` (app private key content)

@@ -1,36 +1,51 @@
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_async_engine
+"""
+Database engine and session factory.
 
-# 数据库URL
-ASYNC_DATABASE_URL = "mysql+aiomysql://root:123456@localhost:3306/pyfast?charset=utf8mb4"
+All connection parameters come from config/settings.yaml via app_conf.
+Active database is selected by APP_DB in .env.
+"""
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-# 创建异步引擎
+from config.app_conf import get_db_config
+
+_cfg = get_db_config()
+
 async_engine = create_async_engine(
-    ASYNC_DATABASE_URL,
-    # future=True,
-    echo=True,  # 输出sql日志
-    pool_size=10,  # 设置连接池中保持的持久连接数
-    max_overflow=5,  # 设置连接池允许创建的额外连接数
-    pool_timeout=30,  # 超时时间
-    pool_pre_ping=True, #取连接时先探活，坏连接自动丢弃重建
-    pool_recycle=30, #在 MySQL 超时前主动回收重建（比如小于 wait_timeout）
+    _cfg.async_url,
+    echo=_cfg.echo,
+    pool_size=_cfg.pool_size,
+    max_overflow=_cfg.max_overflow,
+    pool_timeout=_cfg.pool_timeout,
+    pool_pre_ping=True,
+    pool_recycle=_cfg.pool_recycle,
+    connect_args={
+        "connect_timeout": _cfg.connect_timeout,
+        # "read_timeout": _cfg.read_timeout,
+        # "write_timeout": _cfg.write_timeout,
+    },
 )
 
-# 创建异步会话工厂
 AsyncSessionLocal = async_sessionmaker(
     bind=async_engine,
     expire_on_commit=False,
-    class_=AsyncSession
+    class_=AsyncSession,
 )
 
 
-# 依赖项，用于获取数据库会话
+async def check_db_connection() -> None:
+    async with async_engine.connect() as conn:
+        await conn.execute(text("SELECT 1"))
+
+
+async def close_db_engine() -> None:
+    await async_engine.dispose()
+
+
 async def get_db():
     async with AsyncSessionLocal() as session:
         try:
             yield session
-            await session.commit()
-        except Exception as e:
+        except Exception:
             await session.rollback()
-            raise # 使用raise 将原始异常再次抛出，确保Web框架能捕获到错误
-        finally:
-            await session.close()
+            raise

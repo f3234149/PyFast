@@ -212,6 +212,10 @@ __marimo__/
 .env.*
 !.env.example
 
+# 多环境配置文件，包含数据库密码/私钥路径等敏感信息（勿提交真实值）
+config/settings.yaml
+!config/settings.yaml.example
+
 # --- 操作系统 ---
 # macOS
 .DS_Store
